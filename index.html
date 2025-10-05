@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K.I.T.T. Communicator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* Tailwind gray-900 */
+        }
+
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* KITT Scanner Animation */
+        .kitt-scanner {
+            position: relative;
+            width: 100%;
+            height: 20px;
+            background: #111;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .kitt-scanner-light {
+            position: absolute;
+            top: 0;
+            left: -10%;
+            width: 10%;
+            height: 100%;
+            background: red;
+            border-radius: 2px;
+            box-shadow: 0 0 10px red, 0 0 20px red, 0 0 30px red;
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% {
+                left: -10%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: -10%;
+            }
+        }
+        
+        /* Custom scrollbar for a more techy feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1F2937; /* gray-800 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4B5563; /* gray-600 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6B7280; /* gray-500 */
+        }
+
+        /* Push-to-talk button active state */
+        #ptt-button:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 30px 10px rgba(239, 68, 68, 0.5); /* red-500 with opacity */
+        }
+
+        /* Hide the default file input */
+        .hidden-input {
+            display: none;
+        }
+        
+        /* Prevent textarea resize handle */
+        #text-prompt-input {
+            resize: none;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "d3-array": "https://aistudiocdn.com/d3-array@^3.2.4",
+    "d3-scale": "https://aistudiocdn.com/d3-scale@^4.0.2",
+    "d3-shape": "https://aistudiocdn.com/d3-shape@^3.2.0",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.22.0",
+    "lit": "https://aistudiocdn.com/lit@^3.3.1",
+    "lit/": "https://aistudiocdn.com/lit@^3.3.1/"
+  }
+}
+</script>
+</head>
+<body class="text-gray-200">
+
+    <div class="container mx-auto max-w-6xl p-4 min-h-screen flex flex-col lg:flex-row gap-4">
+        
+        <!-- Left Panel: Communicator -->
+        <div class="lg:w-1/3 flex flex-col gap-4">
+            <div class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 flex-grow flex flex-col justify-between">
+                <div>
+                    <h1 class="font-orbitron text-2xl font-bold text-center text-red-500">K.I.T.T.</h1>
+                    <p class="text-center text-sm text-gray-400 mb-4">Communicator Active</p>
+                </div>
+                
+                <div class="flex justify-center items-center my-8">
+                    <button id="ptt-button" class="w-48 h-48 rounded-full bg-gray-900 border-4 border-gray-700 flex flex-col justify-center items-center transition-all duration-150 ease-in-out focus:outline-none">
+                        <i id="ptt-icon" data-lucide="mic" class="w-20 h-20 text-red-500"></i>
+                        <span id="ptt-label" class="mt-2 text-lg font-semibold">Tap to Speak</span>
+                    </button>
+                </div>
+
+                <div class="space-y-3">
+                    <div id="status-display" class="flex items-center justify-center gap-3 bg-gray-900 p-3 rounded-lg">
+                        <div id="status-light" class="w-4 h-4 rounded-full bg-green-500 transition-colors duration-300"></div>
+                        <span id="status-text" class="font-semibold text-lg">Ready</span>
+                    </div>
+                    <div class="kitt-scanner">
+                        <div id="scanner-light" class="kitt-scanner-light"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Controls Panel -->
+            <div class="bg-gray-800 p-4 rounded-2xl shadow-lg border border-gray-700">
+                <h2 class="font-orbitron text-lg font-bold mb-3 text-center">System Controls</h2>
+                <div id="media-preview-container" class="mb-3 hidden">
+                    <p class="text-sm font-semibold mb-2 text-center">Media ready for analysis:</p>
+                    <div class="relative w-full aspect-video bg-gray-900 rounded-lg overflow-hidden">
+                        <img id="image-preview" class="hidden w-full h-full object-contain" />
+                        <video id="video-preview" class="hidden w-full h-full object-contain" controls></video>
+                        <button id="remove-media-btn" class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 p-1 rounded-full text-white">
+                             <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="upload-media-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2">
+                        <i data-lucide="paperclip" class="w-5 h-5"></i> Media
+                    </button>
+                     <button id="youtube-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M2.5 17a2.4 2.4 0 0 1 3 0L8 20l3.5-3.5a2.4 2.4 0 0 1 3 0L18 20l2.5-2.5a2.4 2.4 0 0 1 3 0s-3.5 3.5-3.5 3.5-3.5-3.5-3.5-3.5 3.5-3.5 3.5-3.5-3.5 3.5-3.5 3.5zM12 2v10M18.9 5.2a9 9 0 1 1-13.8 0"/></svg>
+                        YouTube
+                    </button>
+                    <button id="upload-history-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2">
+                        <i data-lucide="upload-cloud" class="w-5 h-5"></i> Load
+                    </button>
+                    <button id="save-history-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2">
+                        <i data-lucide="download-cloud" class="w-5 h-5"></i> Save
+                    </button>
+                    <button id="analyze-situation-btn" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 col-span-2">
+                        <i data-lucide="brain-circuit" class="w-5 h-5"></i> ✨ Analyze Situation
+                    </button>
+                     <button id="visualize-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 col-span-2">
+                        <i data-lucide="image" class="w-5 h-5"></i> ✨ Visualize
+                    </button>
+                    <input type="file" id="media-upload-input" class="hidden-input" accept="image/*,video/*,application/json,.jpeg,.jpg,.png">
+                    <input type="file" id="history-upload-input" class="hidden-input" accept="application/json,.json">
+                </div>
+                 <div class="mt-4">
+                    <label for="voice-select" class="block text-sm font-medium text-gray-300 mb-1">K.I.T.T. Voice</label>
+                    <select id="voice-select" class="w-full bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block p-2.5">
+                        <option>Loading voices...</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Chat History and Text Input -->
+        <div class="lg:w-2/3 flex flex-col">
+            <div id="video-container" class="bg-gray-900 rounded-2xl shadow-lg border border-gray-700 flex-grow flex-col h-[60vh] lg:h-auto hidden">
+                <!-- YouTube Iframe will go here -->
+            </div>
+            <div id="chat-container" class="bg-gray-800 p-4 rounded-2xl shadow-lg border border-gray-700 flex-grow flex flex-col h-[60vh] lg:h-auto">
+                 <h2 class="font-orbitron text-xl font-bold mb-4 text-center border-b border-gray-700 pb-2">Mission Log</h2>
+                <div id="chat-history" class="flex-grow overflow-y-auto space-y-4 pr-2">
+                    <!-- Chat messages will be appended here -->
+                </div>
+                <div id="interim-transcript-container" class="mt-2 p-2 bg-gray-900 rounded-md h-12 text-gray-400 italic hidden">
+                    <p id="interim-transcript"></p>
+                </div>
+            </div>
+            <!-- Text Input Area -->
+            <div class="mt-4 bg-gray-800 p-2 rounded-2xl shadow-lg border border-gray-700">
+                <div class="flex items-end gap-2">
+                    <textarea id="text-prompt-input" rows="1" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500" style="max-height: 150px;" placeholder="Type a message or provide instructions..."></textarea>
+                    <button id="send-text-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold p-3 rounded-full flex items-center justify-center self-end">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- YouTube Modal -->
+    <div id="youtube-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-2xl shadow-lg border border-gray-700 w-full max-w-2xl text-gray-200 flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+                <h2 class="font-orbitron text-xl font-bold text-red-500">YouTube Analysis</h2>
+                <button id="close-youtube-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <div class="p-4">
+                <div class="flex mb-4 border-b border-gray-700">
+                    <button id="youtube-url-tab" class="py-2 px-4 text-lg font-semibold border-b-2 border-red-500">Paste URL</button>
+                    <button id="youtube-search-tab" class="py-2 px-4 text-lg text-gray-500 font-semibold border-b-2 border-transparent">Search</button>
+                </div>
+                <div id="youtube-url-content">
+                    <div class="flex gap-2">
+                        <input type="text" id="youtube-url-input" placeholder="Paste a YouTube URL" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <button id="analyze-youtube-url-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">Analyze</button>
+                    </div>
+                </div>
+                <div id="youtube-search-content" class="hidden">
+                     <div class="flex gap-2">
+                        <input type="text" id="youtube-search-input" placeholder="Search for a video..." class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <button id="youtube-search-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">Search</button>
+                    </div>
+                </div>
+            </div>
+            <div id="youtube-results-container" class="flex-grow overflow-y-auto p-4 space-y-3">
+                 <!-- Search results will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Generation Modal -->
+    <div id="visualize-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-2xl shadow-lg border border-gray-700 w-full max-w-lg text-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+                <h2 class="font-orbitron text-xl font-bold text-indigo-400">Visual Rendering Unit</h2>
+                <button id="close-visualize-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <div class="p-4 space-y-4">
+                <p>Michael, please describe the image you would like me to render.</p>
+                <textarea id="visualize-prompt-input" rows="3" placeholder="e.g., a blueprint of a secret underground lab..." class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                <button id="generate-image-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2">
+                    <i data-lucide="image" class="w-5 h-5"></i> Generate Image
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { GoogleGenAI, Type } from "https://esm.sh/@google/genai@^0.7.0";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // --- GEMINI API SETUP ---
+            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+            const KITT_SYSTEM_INSTRUCTION = "You are K.I.T.T., a witty, highly intelligent, and conversational AI partner from the 80s TV show Knight Rider. You assist your partner, whom you should refer to as Michael. Keep your responses helpful, slightly dramatic, and concise, with a touch of your signature personality. Always embody the character of K.I.T.T.";
+            let chat = ai.chats.create({ 
+                model: 'gemini-2.5-flash',
+                config: { systemInstruction: KITT_SYSTEM_INSTRUCTION }
+            });
+
+            // --- DOM ELEMENTS ---
+            const pttButton = document.getElementById('ptt-button');
+            const pttIcon = document.getElementById('ptt-icon');
+            const pttLabel = document.getElementById('ptt-label');
+
+            const statusLight = document.getElementById('status-light');
+            const statusText = document.getElementById('status-text');
+            const scannerLight = document.getElementById('scanner-light');
+
+            const chatHistoryEl = document.getElementById('chat-history');
+            const interimContainer = document.getElementById('interim-transcript-container');
+            const interimTranscriptEl = document.getElementById('interim-transcript');
+            
+            const textPromptInput = document.getElementById('text-prompt-input');
+            const sendTextBtn = document.getElementById('send-text-btn');
+
+            const uploadMediaBtn = document.getElementById('upload-media-btn');
+            const uploadHistoryBtn = document.getElementById('upload-history-btn');
+            const saveHistoryBtn = document.getElementById('save-history-btn');
+            const analyzeSituationBtn = document.getElementById('analyze-situation-btn');
+            const youtubeBtn = document.getElementById('youtube-btn');
+            const visualizeBtn = document.getElementById('visualize-btn');
+            
+            const mediaUploadInput = document.getElementById('media-upload-input');
+            const historyUploadInput = document.getElementById('history-upload-input');
+
+            const mediaPreviewContainer = document.getElementById('media-preview-container');
+            const imagePreview = document.getElementById('image-preview');
+            const videoPreview = document.getElementById('video-preview');
+            const removeMediaBtn = document.getElementById('remove-media-btn');
+            
+            const videoContainer = document.getElementById('video-container');
+            
+            const youtubeModal = document.getElementById('youtube-modal');
+            const closeYoutubeModalBtn = document.getElementById('close-youtube-modal-btn');
+            const youtubeUrlTab = document.getElementById('youtube-url-tab');
+            const youtubeSearchTab = document.getElementById('youtube-search-tab');
+            const youtubeUrlContent = document.getElementById('youtube-url-content');
+            const youtubeSearchContent = document.getElementById('youtube-search-content');
+            const youtubeUrlInput = document.getElementById('youtube-url-input');
+            const analyzeYoutubeUrlBtn = document.getElementById('analyze-youtube-url-btn');
+            const youtubeSearchInput = document.getElementById('youtube-search-input');
+            const youtubeSearchBtn = document.getElementById('youtube-search-btn');
+            const youtubeResultsContainer = document.getElementById('youtube-results-container');
+            
+            const visualizeModal = document.getElementById('visualize-modal');
+            const closeVisualizeModalBtn = document.getElementById('close-visualize-modal-btn');
+            const visualizePromptInput = document.getElementById('visualize-prompt-input');
+            const generateImageBtn = document.getElementById('generate-image-btn');
+
+            const voiceSelect = document.getElementById('voice-select');
+
+            // --- STATE MANAGEMENT ---
+            let chatHistory = []; // { role, text, imageUrl, isSpecial, title }
+            let finalTranscript = '';
+            let recordingState = 'idle'; // 'idle', 'recording', 'recorded'
+            let uploadedMedia = { data: null, mimeType: null };
+            let activeYoutubeVideoId = null;
+            let voices = [];
+
+            // --- SPEECH RECOGNITION (VOICE -> TEXT) ---
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                updateStatus('error', 'Speech Recognition not supported.');
+                pttButton.disabled = true;
+                return;
+            }
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onstart = () => { finalTranscript = ''; recordingState = 'recording'; updatePttButtonUI('recording'); updateStatus('listening', 'Listening...'); interimContainer.classList.remove('hidden'); };
+            recognition.onresult = (event) => { let interimTranscript = ''; for (let i = event.resultIndex; i < event.results.length; ++i) { const transcriptPart = event.results[i][0].transcript; if (event.results[i].isFinal) { finalTranscript += transcriptPart.trim() + ' '; } else { interimTranscript += transcriptPart; } } interimTranscriptEl.textContent = finalTranscript + interimTranscript; };
+            recognition.onend = () => { interimContainer.classList.add('hidden'); interimTranscriptEl.textContent = ''; if (finalTranscript.trim()) { recordingState = 'recorded'; updatePttButtonUI('recorded'); updateStatus('idle', 'Ready to send'); } else { recordingState = 'idle'; updatePttButtonUI('idle'); updateStatus('idle', 'Ready'); } };
+            recognition.onerror = (event) => { console.error('Speech recognition error:', event.error); updateStatus('error', `Error: ${event.error}`); recordingState = 'idle'; updatePttButtonUI('idle'); };
+
+            // --- SPEECH SYNTHESIS (TEXT -> VOICE) ---
+            const populateVoiceList = () => {
+                voices = speechSynthesis.getVoices();
+                voiceSelect.innerHTML = '';
+                voices
+                    .filter(voice => voice.lang.startsWith('en'))
+                    .forEach(voice => {
+                        const option = document.createElement('option');
+                        option.textContent = `${voice.name} (${voice.lang})`;
+                        option.setAttribute('data-lang', voice.lang);
+                        option.setAttribute('data-name', voice.name);
+                        voiceSelect.appendChild(option);
+                    });
+                const preferredVoices = ["Google US English", "Microsoft David - English (United States)", "Alex"];
+                for (const preferred of preferredVoices) {
+                    const found = Array.from(voiceSelect.options).find(opt => opt.text.includes(preferred));
+                    if (found) {
+                        found.selected = true;
+                        break;
+                    }
+                }
+            };
+            populateVoiceList();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = populateVoiceList;
+            }
+            const speak = (text) => { if (speechSynthesis.speaking) speechSynthesis.cancel(); updateStatus('speaking', 'Speaking...'); const utterance = new SpeechSynthesisUtterance(text); const selectedOption = voiceSelect.options[voiceSelect.selectedIndex]; const selectedVoiceName = selectedOption.getAttribute('data-name'); const voice = voices.find(v => v.name === selectedVoiceName); if (voice) utterance.voice = voice; utterance.onend = () => updateStatus('idle', 'Ready'); utterance.onerror = (e) => { console.error('Speech synthesis error', e); updateStatus('error', 'Speech audio error'); }; speechSynthesis.speak(utterance); };
+
+            // --- UI & STATUS UPDATES ---
+            const updatePttButtonUI = (state) => { switch (state) { case 'recording': pttIcon.setAttribute('data-lucide', 'square'); pttLabel.textContent = 'Tap to Stop'; pttButton.classList.add('bg-red-900', 'border-red-500'); pttButton.classList.remove('bg-gray-900', 'bg-green-900', 'border-green-500'); break; case 'recorded': pttIcon.setAttribute('data-lucide', 'send'); pttLabel.textContent = 'Press to Send'; pttButton.classList.add('bg-green-900', 'border-green-500'); pttButton.classList.remove('bg-red-900', 'border-red-500'); break; case 'idle': default: pttIcon.setAttribute('data-lucide', 'mic'); pttLabel.textContent = 'Tap to Speak'; pttButton.classList.remove('bg-red-900', 'bg-green-900', 'border-red-500', 'border-green-500'); pttButton.classList.add('bg-gray-900'); break; } lucide.createIcons(); };
+            const updateStatus = (status, text) => { statusText.textContent = text; statusLight.className = 'w-4 h-4 rounded-full transition-colors duration-300 '; scannerLight.style.animationPlayState = 'paused'; pttIcon.classList.remove('animate-pulse'); switch (status) { case 'idle': statusLight.classList.add('bg-green-500'); break; case 'listening': statusLight.classList.add('bg-blue-500', 'animate-pulse'); pttIcon.classList.add('animate-pulse'); break; case 'processing': statusLight.classList.add('bg-yellow-500', 'animate-pulse'); break; case 'speaking': statusLight.classList.add('bg-red-500'); scannerLight.style.animationPlayState = 'running'; break; case 'error': statusLight.classList.add('bg-red-700'); break; } };
+
+            const addToChat = (role, text, options = {}) => {
+                const { imageUrl = null, isSpecial = false, title = null } = options;
+                chatHistory.push({ role, text, imageUrl, isSpecial, title });
+                renderChatHistory();
+            };
+
+            const renderChatHistory = () => {
+                chatHistoryEl.innerHTML = '';
+                chatHistory.forEach(msg => {
+                    if (msg.isSpecial) {
+                        renderSpecialMessage(msg.title, msg.text);
+                        return;
+                    }
+                    const isUser = msg.role === 'user';
+                    const messageWrapper = document.createElement('div');
+                    messageWrapper.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
+                    const messageBubble = document.createElement('div');
+                    messageBubble.className = `max-w-md p-3 rounded-lg shadow ${isUser ? 'bg-blue-600 text-white rounded-br-none' : 'bg-gray-700 text-gray-200 rounded-bl-none'}`;
+                    const textEl = document.createElement('p');
+                    textEl.textContent = msg.text;
+                    messageBubble.appendChild(textEl);
+                    if (msg.imageUrl) {
+                        const imageEl = document.createElement('img');
+                        imageEl.src = msg.imageUrl;
+                        imageEl.alt = "Generated visual";
+                        imageEl.className = 'mt-2 rounded-lg max-w-full h-auto cursor-pointer';
+                        imageEl.onclick = () => window.open(msg.imageUrl, '_blank');
+                        messageBubble.appendChild(imageEl);
+                    }
+                    messageWrapper.appendChild(messageBubble);
+                    chatHistoryEl.appendChild(messageWrapper);
+                });
+                chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+            };
+
+             const renderSpecialMessage = (title, markdownText) => { const toHtml = (md) => { let processed = md.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/^#+\s*(.*)/gm, '<h4 class="font-bold mt-3 mb-1">$1</h4>'); const lines = processed.split('\n'); let html = ''; let inList = false; for (const line of lines) { if (line.trim().startsWith('* ') || line.trim().startsWith('- ')) { if (!inList) { html += '<ul class="list-disc list-inside space-y-1 mt-2">'; inList = true; } html += `<li>${line.trim().substring(2)}</li>`; } else { if (inList) { html += '</ul>'; inList = false; } html += line + '<br>'; } } if (inList) { html += '</ul>'; } return html.replace(/<br>$/, ''); }; const messageWrapper = document.createElement('div'); messageWrapper.className = 'flex justify-start w-full my-4'; const messageBubble = document.createElement('div'); messageBubble.className = 'w-full p-4 rounded-lg shadow bg-gray-900 border border-yellow-500 text-gray-300'; messageBubble.innerHTML = `<h3 class="font-orbitron text-lg font-bold text-yellow-400 mb-3 pb-2 border-b border-gray-700 flex items-center gap-2"><i data-lucide="brain-circuit" class="w-5 h-5"></i> ${title}</h3><div class="text-sm space-y-2">${toHtml(markdownText)}</div>`; messageWrapper.appendChild(messageBubble); chatHistoryEl.appendChild(messageWrapper); lucide.createIcons(); };
+
+            // --- GEMINI API INTERACTION ---
+            async function sendToGemini() {
+                updateStatus('processing', 'Processing...');
+                const lastUserMessage = chatHistory[chatHistory.length - 1];
+                let promptText = lastUserMessage.text || ' ';
+                const messageParts = [];
+
+                if (activeYoutubeVideoId) {
+                    promptText = `(Regarding YouTube video ID: ${activeYoutubeVideoId}) ${promptText}`;
+                }
+                
+                if (uploadedMedia.data) {
+                    const mediaType = uploadedMedia.mimeType.split('/')[0];
+                    if(!promptText.trim()) {
+                         promptText = `Please analyze the attached ${mediaType}, Michael.`;
+                    }
+                    messageParts.push({ inlineData: { mimeType: uploadedMedia.mimeType, data: uploadedMedia.data } });
+                }
+                
+                messageParts.unshift({ text: promptText });
+
+                try {
+                    const response = await chat.sendMessage({ message: messageParts });
+                    const aiResponse = response.text;
+                    addToChat('model', aiResponse);
+                    speak(aiResponse);
+                } catch (error) {
+                    console.error("Gemini API call failed:", error);
+                    const errorMessage = `My apologies, Michael. I seem to be experiencing a malfunction. Error: ${error.message}`;
+                    addToChat('model', errorMessage);
+                    speak(errorMessage);
+                    updateStatus('error', 'API Error');
+                } finally {
+                    if (uploadedMedia.data) clearMediaPreview();
+                }
+            };
+            
+            async function getTacticalBriefing() {
+                if (chatHistory.filter(m => !m.isSpecial).length < 2) { speak("Michael, there is not enough data for a meaningful analysis."); return; }
+                updateStatus('processing', 'Analyzing...');
+                const systemInstruction = "You are K.I.T.T. from Knight Rider. Your partner, Michael, has asked for a situation analysis based on your recent conversation. Review the provided mission log. Generate a concise, tactical briefing using simple markdown. The briefing must include sections for: '**Mission Summary**', '**Key Subjects**', '**Potential Risks**', and a '**Recommended Action**'. Frame the entire response as if you are presenting a formal analysis.";
+                const contents = chatHistory.filter(m => !m.isSpecial).map(m => ({role: m.role, parts: [{text: m.text}]}));
+                try {
+                    const response = await ai.models.generateContent({
+                        model: 'gemini-2.5-flash', contents, config: { systemInstruction }
+                    });
+                    const briefing = response.text;
+                    addToChat('model', briefing, {isSpecial: true, title: 'K.I.T.T. Tactical Briefing'});
+                    speak("Analysis complete, Michael.");
+                } catch (error) {
+                    console.error("Gemini analysis failed:", error);
+                    const errorMessage = `I'm sorry, Michael. My analysis processors have encountered an anomaly. Error: ${error.message}`;
+                    addToChat('model', errorMessage, {isSpecial: true, title: 'Analysis Failed'});
+                    speak(errorMessage);
+                    updateStatus('error', 'Analysis Error');
+                }
+            };
+
+            async function generateImage() {
+                const prompt = visualizePromptInput.value.trim();
+                if (!prompt) return;
+                visualizeModal.classList.add('hidden');
+                updateStatus('processing', 'Rendering visual...');
+                addToChat('model', `Rendering a visual for: "${prompt}", Michael. Stand by...`);
+                try {
+                    const response = await ai.models.generateImages({
+                        model: 'imagen-4.0-generate-001',
+                        prompt: prompt,
+                        config: { numberOfImages: 1 },
+                    });
+                    const imageUrl = `data:image/png;base64,${response.generatedImages[0].image.imageBytes}`;
+                    addToChat('model', 'Here is the visual rendering you requested, Michael.', { imageUrl });
+                    speak("The rendering is complete.");
+                } catch (error) {
+                    console.error("Image generation failed:", error);
+                    const errorMessage = `I'm sorry, Michael. My visual rendering unit has malfunctioned. Error: ${error.message}`;
+                    addToChat('model', errorMessage);
+                    speak(errorMessage);
+                } finally {
+                    updateStatus('idle', 'Ready');
+                    visualizePromptInput.value = '';
+                }
+            };
+
+            async function searchYoutube(query) {
+                updateStatus('processing', 'Searching YouTube...');
+                youtubeResultsContainer.innerHTML = '<p class="text-center">Searching...</p>';
+                try {
+                    const response = await ai.models.generateContent({
+                        model: 'gemini-2.5-flash',
+                        contents: `Find 5 relevant YouTube videos about "${query}". Provide the video ID, title, and thumbnail URL for each.`,
+                        config: {
+                            responseMimeType: 'application/json',
+                            responseSchema: {
+                                type: Type.ARRAY,
+                                items: {
+                                    type: Type.OBJECT,
+                                    properties: { videoId: { type: Type.STRING }, title: { type: Type.STRING }, thumbnailUrl: { type: Type.STRING } },
+                                    required: ['videoId', 'title', 'thumbnailUrl'],
+                                },
+                            },
+                        },
+                    });
+                    renderYoutubeResults(JSON.parse(response.text));
+                } catch (error) {
+                    console.error('YouTube search failed:', error);
+                    youtubeResultsContainer.innerHTML = `<p class="text-center text-red-400">Search failed: ${error.message}</p>`;
+                } finally {
+                    updateStatus('idle', 'Ready');
+                }
+            };
+
+            function renderYoutubeResults(results) {
+                youtubeResultsContainer.innerHTML = '';
+                if (!results || results.length === 0) {
+                    youtubeResultsContainer.innerHTML = '<p class="text-center">No results found, Michael.</p>';
+                    return;
+                }
+                results.forEach(result => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700 cursor-pointer';
+                    item.onclick = () => selectYoutubeVideo(result.videoId);
+                    item.innerHTML = `
+                        <img src="${result.thumbnailUrl}" alt="${result.title}" class="w-32 h-18 object-cover rounded">
+                        <p class="font-semibold text-sm">${result.title}</p>
+                    `;
+                    youtubeResultsContainer.appendChild(item);
+                });
+            };
+
+            function selectYoutubeVideo(videoId) {
+                activeYoutubeVideoId = videoId;
+                videoContainer.innerHTML = `
+                    <div class="relative w-full h-full">
+                         <iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                         <button id="close-video-btn" class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 p-2 rounded-full text-white leading-none z-10"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    </div>`;
+                lucide.createIcons();
+                document.getElementById('close-video-btn').onclick = closeYoutubeVideo;
+                chatContainer.classList.add('hidden');
+                videoContainer.classList.remove('hidden');
+                youtubeModal.classList.add('hidden');
+                addToChat('model', `I have the video (ID: ${videoId}) on screen, Michael. What would you like to know?`);
+                speak(`Video ready for analysis, Michael.`);
+            };
+
+            function closeYoutubeVideo() {
+                activeYoutubeVideoId = null;
+                videoContainer.innerHTML = '';
+                videoContainer.classList.add('hidden');
+                chatContainer.classList.remove('hidden');
+            };
+
+            // --- FILE HANDLING ---
+            const saveHistory = () => {
+                if (chatHistory.length === 0) return;
+                const historyToSave = chatHistory.map(m => ({ role: m.role, text: m.text, imageUrl: m.imageUrl, isSpecial: m.isSpecial, title: m.title }));
+                const blob = new Blob([JSON.stringify(historyToSave, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = `kitt-log-${new Date().toISOString()}.json`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            };
+            
+            const handleHistoryUpload = (event) => {
+                const file = event.target.files[0];
+                if (!file || file.type !== "application/json") { speak("My apologies Michael, but that file is not in the correct mission log format."); return; }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const loadedData = JSON.parse(e.target.result);
+                        if (!Array.isArray(loadedData)) throw new Error("History is not an array.");
+                        const migratedHistory = loadedData.map(item => ({ role: item.role, text: item.text, imageUrl: item.imageUrl || null, isSpecial: item.isSpecial || false, title: item.title || null })).filter(Boolean);
+                        chatHistory = migratedHistory;
+                        const geminiHistory = migratedHistory.filter(m => !m.isSpecial).map(m => ({role: m.role, parts: [{text: m.text}]}));
+                        chat = ai.chats.create({ model: 'gemini-2.5-flash', history: geminiHistory, config: { systemInstruction: KITT_SYSTEM_INSTRUCTION } });
+                        renderChatHistory();
+                        speak("Mission log successfully loaded, Michael.");
+                    } catch (error) { console.error("History upload error:", error); speak("Michael, that file appears to be corrupted."); }
+                };
+                reader.readAsText(file);
+                historyUploadInput.value = '';
+            };
+
+            const handleMediaUpload = (event) => { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { const base64String = e.target.result.split(',')[1]; uploadedMedia = { data: base64String, mimeType: file.type }; showMediaPreview(file.type, e.target.result); }; reader.readAsDataURL(file); mediaUploadInput.value = ''; };
+            const showMediaPreview = (type, dataUrl) => { mediaPreviewContainer.classList.remove('hidden'); if (type.startsWith('image/')) { imagePreview.src = dataUrl; imagePreview.classList.remove('hidden'); videoPreview.classList.add('hidden'); } else if (type.startsWith('video/')) { videoPreview.src = dataUrl; videoPreview.classList.remove('hidden'); imagePreview.classList.add('hidden'); } };
+            const clearMediaPreview = () => { mediaPreviewContainer.classList.add('hidden'); imagePreview.src = ''; videoPreview.src = ''; imagePreview.classList.add('hidden'); videoPreview.classList.add('hidden'); uploadedMedia = { data: null, mimeType: null }; };
+            
+            // --- ACTION HANDLERS ---
+            const handlePttClick = () => {
+                switch (recordingState) {
+                    case 'idle': recognition.start(); break;
+                    case 'recording': recognition.stop(); break;
+                    case 'recorded':
+                        const transcript = finalTranscript.trim();
+                        if (transcript) { addToChat('user', transcript); sendToGemini(); }
+                        finalTranscript = ''; recordingState = 'idle'; updatePttButtonUI('idle');
+                        break;
+                }
+            };
+            
+            const sendTextMessage = () => {
+                const prompt = textPromptInput.value.trim();
+                if (!prompt && !uploadedMedia.data) return;
+                addToChat('user', prompt);
+                sendToGemini();
+                textPromptInput.value = '';
+                textPromptInput.style.height = 'auto';
+            };
+            
+            const getYouTubeVideoId = (url) => {
+                const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+                const match = url.match(youtubeRegex);
+                return match ? match[1] : null;
+            };
+
+            // --- EVENT LISTENERS ---
+            pttButton.addEventListener('click', handlePttClick);
+            sendTextBtn.addEventListener('click', sendTextMessage);
+            textPromptInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendTextMessage(); } });
+            textPromptInput.addEventListener('input', () => { textPromptInput.style.height = 'auto'; textPromptInput.style.height = (textPromptInput.scrollHeight) + 'px'; });
+            
+            saveHistoryBtn.addEventListener('click', saveHistory);
+            uploadHistoryBtn.addEventListener('click', () => historyUploadInput.click());
+            historyUploadInput.addEventListener('change', handleHistoryUpload);
+            uploadMediaBtn.addEventListener('click', () => mediaUploadInput.click());
+            mediaUploadInput.addEventListener('change', handleMediaUpload);
+            removeMediaBtn.addEventListener('click', clearMediaPreview);
+            analyzeSituationBtn.addEventListener('click', getTacticalBriefing);
+            
+            youtubeBtn.addEventListener('click', () => youtubeModal.classList.remove('hidden'));
+            closeYoutubeModalBtn.addEventListener('click', () => youtubeModal.classList.add('hidden'));
+            youtubeUrlTab.addEventListener('click', () => { youtubeUrlContent.classList.remove('hidden'); youtubeSearchContent.classList.add('hidden'); youtubeUrlTab.classList.add('border-red-500'); youtubeUrlTab.classList.remove('text-gray-500'); youtubeSearchTab.classList.remove('border-red-500'); youtubeSearchTab.classList.add('text-gray-500'); });
+            youtubeSearchTab.addEventListener('click', () => { youtubeUrlContent.classList.add('hidden'); youtubeSearchContent.classList.remove('hidden'); youtubeUrlTab.classList.remove('border-red-500'); youtubeUrlTab.classList.add('text-gray-500'); youtubeSearchTab.classList.add('border-red-500'); youtubeSearchTab.classList.remove('text-gray-500'); });
+            analyzeYoutubeUrlBtn.addEventListener('click', () => { const videoId = getYouTubeVideoId(youtubeUrlInput.value); if(videoId) selectYoutubeVideo(videoId); else speak("That does not appear to be a valid YouTube URL, Michael."); });
+            youtubeSearchBtn.addEventListener('click', () => { const query = youtubeSearchInput.value.trim(); if(query) searchYoutube(query); });
+            youtubeSearchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const query = youtubeSearchInput.value.trim(); if(query) searchYoutube(query); }});
+
+            visualizeBtn.addEventListener('click', () => visualizeModal.classList.remove('hidden'));
+            closeVisualizeModalBtn.addEventListener('click', () => visualizeModal.classList.add('hidden'));
+            generateImageBtn.addEventListener('click', generateImage);
+            
+            // Initial greeting
+            setTimeout(() => {
+                const greeting = "Knight Industries Two Thousand activated. I am ready, Michael.";
+                addToChat('model', greeting);
+                speak(greeting);
+            }, 500);
+        });
+    </script>
+</body>
+</html>

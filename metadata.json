@@ -1,0 +1,9 @@
+{
+  "name": "GEMINI   3DAPEX BARDII BEST",
+  "description": "An interactive video player that lets you summarize, describe scenes, extract text, search for objects, and more.  LOTS MORE",
+  "requestFramePermissions": [
+    "microphone",
+    "display-capture"
+  ],
+  "prompt": ""
+}
