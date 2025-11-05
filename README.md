@@ -18,63 +18,100 @@ View your app in AI Studio: https://ai.studio/apps/drive/1yLG8u9VTTrrKeHwNFcNIke
 3. Run the app:
    `npm run dev`
 
-## Claude Code Web Worker
+## SuperBeing Multi-Agent Stack
 
-This repo is configured as a **remote worker** in the SuperBeing multi-agent stack.
-
-### Quick Start
-
-**On your local machine:**
-
-```bash
-# Start the watcher (pulls results from web worker)
-python3 scripts/gh_watch.py --out-dir ./out/ccsweb --obsidian-vault ~/path/to/vault
-```
-
-**In Claude Code Web (claude.ai/code):**
-
-```bash
-# Process queued tasks
-python3 scripts/ccsweb_worker.py
-
-# Or manually publish results after completing a task
-python3 scripts/bridge_ccsweb.py "task-name" --artifacts report.md
-```
-
-### How It Works
-
-1. **Queue tasks** by creating JSON tickets in `tickets/inbox/`
-2. **Process in web worker** - Claude picks up tickets and completes tasks
-3. **Results auto-sync** - Local watcher pulls artifacts to `out/ccsweb/` and Obsidian
-4. **Orchestrator integrates** - SuperBeing feeds results into the multi-agent pipeline
-
-### Documentation
-
-- **[CLAUDE.md](CLAUDE.md)** - Instructions for the web worker agent
-- **[scripts/README.md](scripts/README.md)** - Detailed script documentation
-- **[tickets/README.md](tickets/README.md)** - Task queue system guide
+This repo is the **coordination hub** for a multi-agent AI system powered by **Obsidian**.
 
 ### Architecture
 
 ```
-Local Machine          GitHub           Cloud Worker
-     │                   │                   │
-     │  git push         │                   │
-     ├──────tickets─────>│                   │
-     │                   │   git clone       │
-     │                   │◄──────────────────┤
-     │                   │                   │
-     │                   │   ┌─────────────┐ │
-     │                   │   │ Process task│ │
-     │                   │   └─────────────┘ │
-     │                   │                   │
-     │                   │   git push ccsweb/*
-     │                   │◄──────────────────┤
-     │  git fetch        │                   │
-     │◄────ccsweb/*──────┤                   │
-     │                   │                   │
-     v                   │                   │
-out/ccsweb/             │                   │
-Obsidian/               │                   │
-Drive/                  │                   │
+                User
+                 │
+                 ▼
+          Obsidian Vault ← Central nervous system
+          (Git-synced)      All agents coordinate here
+                 │
+     ┌───────────┼───────────┬──────────┐
+     ▼           ▼           ▼          ▼
+  Gemini      Codex      CCskills    Llama
+  (cheap)     (code)     (smart)     (free!)
+     │           │           │          │
+     └───────────┴───────────┴──────────┘
+                 │
+                 ▼
+        Claude Web (Orchestrator/PM)
+        - Breaks down tickets
+        - Delegates to agents
+        - Synthesizes results
+        - Prevents deep dives
+                 │
+                 ▼
+          Final Artifacts
 ```
+
+### Why Obsidian?
+
+- **Shared memory** - All agents read/write markdown
+- **Clear boundaries** - Task scopes prevent rabbit holes
+- **Audit trail** - Every decision documented
+- **Knowledge graph** - Backlinks create context
+- **Version control** - Git tracks everything
+- **Cost tracking** - See exactly what each agent costs
+
+### Quick Start
+
+**See [QUICKSTART.md](QUICKSTART.md) for detailed setup guide.**
+
+**TL;DR:**
+
+```bash
+# 1. Set up API keys
+export GEMINI_API_KEY=your_key
+export OPENAI_API_KEY=your_key
+
+# 2. Start executive agents (local machine)
+python3 scripts/agent_worker.py --vault obsidian-vault/ --agent gemini --api-key $GEMINI_API_KEY &
+python3 scripts/agent_worker.py --vault obsidian-vault/ --agent codex --api-key $OPENAI_API_KEY &
+python3 scripts/agent_worker.py --vault obsidian-vault/ --agent llama &
+
+# 3. Create a ticket
+cp obsidian-vault/templates/ticket.md obsidian-vault/tickets/inbox/my-task.md
+# Edit and commit
+
+# 4. Run orchestrator (Claude Code Web at claude.ai/code)
+cd obsidian-vault
+python3 ../scripts/orchestrator.py --vault .
+# Then manually decompose as Claude Web
+```
+
+### How It Works
+
+1. **User** creates ticket in `obsidian-vault/tickets/inbox/`
+2. **Claude Web** (orchestrator) analyzes and decomposes into subtasks
+3. **Executive agents** poll for tasks and execute them
+4. **Obsidian** keeps everyone organized and on-task
+5. **Claude Web** synthesizes final deliverable
+6. **No deep dives** - Clear scope and time limits on every task
+
+### Documentation
+
+- **[QUICKSTART.md](QUICKSTART.md)** - Get started in 5 minutes
+- **[obsidian-vault/README.md](obsidian-vault/README.md)** - Vault structure
+- **[obsidian-vault/PROTOCOL.md](obsidian-vault/PROTOCOL.md)** - Coordination protocol
+- **[obsidian-vault/examples/](obsidian-vault/examples/)** - Complete workflow examples
+- **[CLAUDE.md](CLAUDE.md)** - Instructions for Claude Web orchestrator
+- **[scripts/README.md](scripts/README.md)** - Script documentation
+
+### Cost Optimization
+
+**Agent Selection Strategy:**
+
+1. **Llama (Local)** - FREE! Use first for simple tasks
+2. **Gemini Flash** - $0.01-0.05 - Fast analysis, summaries
+3. **Codex** - $0.10-0.50 - Code generation, implementation
+4. **CCskills (Claude CLI)** - $0.50-2.00 - Complex reasoning, architecture
+
+**Example costs:**
+- Simple ticket: $0.00 (Llama only)
+- Medium ticket: $0.15 (Gemini + Codex)
+- Complex ticket: $1.50 (All agents)
