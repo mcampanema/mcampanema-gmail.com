@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "SessionStart": "bash scripts/install_pkgs.sh"
+  },
+  "environment": {
+    "CCS_WEB_BRANCH_PREFIX": "ccsweb/",
+    "CCS_WEB_ART_DIR": "ccsweb_artifacts"
+  },
+  "security": {
+    "allowNetworkAccess": false
+  },
+  "description": "Claude Code Web Worker - Auto-setup for remote task processing"
+}

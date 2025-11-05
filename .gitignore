@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Claude Code Web Worker
+ccsweb_artifacts/
+out/
+CURRENT_TASK.md
+.env
+.env.local
+tickets/processing/
+tickets/done/
