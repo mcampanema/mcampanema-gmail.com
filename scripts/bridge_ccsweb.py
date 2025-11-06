@@ -90,8 +90,8 @@ def main():
     current_branch = run_cmd("git rev-parse --abbrev-ref HEAD")
     print(f"📍 Current branch: {current_branch}")
 
-    # Stage artifact directory
-    run_cmd(f"git add {artifact_dir}")
+    # Stage artifact directory (force add to override .gitignore)
+    run_cmd(f"git add -f {artifact_dir}")
 
     # Check if there are changes to commit
     status = run_cmd("git status --porcelain", check=False)
