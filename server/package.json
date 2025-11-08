@@ -1,0 +1,24 @@
+{
+  "name": "gemini-secure-proxy",
+  "version": "1.0.0",
+  "description": "Secure backend proxy for Gemini API - keeps keys server-side",
+  "type": "module",
+  "main": "gemini-proxy.js",
+  "scripts": {
+    "start": "node gemini-proxy.js",
+    "dev": "nodemon gemini-proxy.js",
+    "deploy": "gcloud run deploy gemini-proxy --source ."
+  },
+  "dependencies": {
+    "@google/genai": "^1.22.0",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
