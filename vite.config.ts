@@ -11,8 +11,10 @@ export default defineConfig(({ mode }) => {
       },
       plugins: [react()],
       define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+        // SECURE: Proxy URL instead of API key
+        'process.env.GEMINI_PROXY_URL': JSON.stringify(env.GEMINI_PROXY_URL || 'https://gemini-proxy-YOUR-ID.run.app'),
+        // Fallback for local development (uses .env file)
+        'process.env.GEMINI_API_KEY': env.NODE_ENV === 'development' ? JSON.stringify(env.GEMINI_API_KEY) : 'undefined'
       },
       resolve: {
         alias: {
