@@ -1,0 +1,143 @@
+{
+  "project": "Native Boarding Schools & Adoption Story Sequence",
+  "version": "1.0",
+  "created": "2025-11-17",
+  "format": "Instagram/Facebook Story",
+  "totalSlides": 4,
+  "theme": "What they didn't teach us about Native boarding schools & adoption",
+  "purpose": "Educational advocacy content about historical trauma and ongoing issues affecting Native communities",
+  "targetAudience": "General audience, particularly those unfamiliar with this history",
+  "files": {
+    "documentation": "story-sequence.md",
+    "slides": [
+      {
+        "file": "slide-01-hook.json",
+        "title": "Hook",
+        "description": "Opening slide asking 'Did you learn this in school?'"
+      },
+      {
+        "file": "slide-02-boarding-schools.json",
+        "title": "Boarding Schools Era",
+        "description": "Facts about 400+ Indian boarding schools (1819-1969)"
+      },
+      {
+        "file": "slide-03-adoption.json",
+        "title": "Adoption Era",
+        "description": "Information about Native child removal through adoption/foster programs"
+      },
+      {
+        "file": "slide-04-resilience.json",
+        "title": "Resilience & CTA",
+        "description": "Contemporary Native resilience and calls to action"
+      }
+    ],
+    "manifest": "story-manifest.json",
+    "report": "implementation-report.md"
+  },
+  "technicalSpecs": {
+    "platform": ["Instagram Stories", "Facebook Stories"],
+    "dimensions": "1080 x 1920 pixels",
+    "aspectRatio": "9:16",
+    "format": ["JPG", "PNG"],
+    "maxFileSize": "30MB",
+    "safeZone": "1080 x 1680 pixels (center)",
+    "duration": "5-7 seconds per slide"
+  },
+  "accessibility": {
+    "altTextIncluded": true,
+    "contrastRatio": "WCAG AA (minimum 4.5:1)",
+    "minimumFontSize": "24pt equivalent",
+    "readableOnMobile": true
+  },
+  "contentWarning": {
+    "required": true,
+    "text": "Content Warning: This story discusses historical trauma, child removal, and cultural genocide affecting Native/Indigenous communities."
+  },
+  "hashtags": [
+    "#NativeHistory",
+    "#IndigenousHistory",
+    "#MMIW",
+    "#LandBack",
+    "#NativeVoices",
+    "#DecolonizeEducation",
+    "#BoardingSchools",
+    "#ICWA",
+    "#NativePride",
+    "#IndigenousPeoples"
+  ],
+  "bestPostingTimes": [
+    {
+      "month": "November",
+      "occasion": "Native American Heritage Month"
+    },
+    {
+      "date": "June 21",
+      "occasion": "National Indigenous Peoples Day (Canada)"
+    },
+    {
+      "date": "August 9",
+      "occasion": "International Day of the World's Indigenous Peoples"
+    },
+    {
+      "date": "September 30",
+      "occasion": "National Day for Truth and Reconciliation (Canada)"
+    },
+    {
+      "date": "October 4",
+      "occasion": "Indigenous Peoples' Day weekend (USA)"
+    }
+  ],
+  "sources": [
+    {
+      "name": "U.S. Department of the Interior",
+      "document": "Federal Indian Boarding School Initiative Investigative Report",
+      "date": "May 2022"
+    },
+    {
+      "name": "Vision Maker Media",
+      "type": "PBS affiliate focused on Native media",
+      "url": "https://www.visionmakermedia.org"
+    },
+    {
+      "name": "National Indian Child Welfare Association",
+      "type": "Research organization"
+    }
+  ],
+  "recommendedDocumentaries": [
+    {
+      "title": "Generations Stolen",
+      "topic": "Boarding school survivors"
+    },
+    {
+      "title": "Dawnland",
+      "topic": "ICWA and child welfare",
+      "availability": "PBS"
+    },
+    {
+      "title": "Gather",
+      "topic": "Food sovereignty",
+      "availability": "Netflix"
+    }
+  ],
+  "imageSourceSuggestions": [
+    "Library of Congress (historic photos)",
+    "National Archives (historic photos)",
+    "Native Stock (nativestock.ca) - contemporary images",
+    "Navajo Stock Images - contemporary images",
+    "Licensed images from Native photographers"
+  ],
+  "ethicalConsiderations": {
+    "culturalSensitivity": "Avoid appropriating sacred imagery. Don't use images of ceremonies without explicit permission.",
+    "communityReview": "If possible, have Native community members review before posting",
+    "imageRights": "Ensure proper licensing and permissions for all images",
+    "platformGuidelines": "Content complies with Instagram/Facebook educational content policies"
+  },
+  "nextSteps": [
+    "Source or license appropriate images",
+    "Design slides in Canva, Adobe Spark, or similar tool",
+    "Review with Native community members if possible",
+    "Schedule for appropriate posting time",
+    "Prepare moderation strategy for comments"
+  ],
+  "credits": "Honor survivors. Support Native communities. Share their stories."
+}

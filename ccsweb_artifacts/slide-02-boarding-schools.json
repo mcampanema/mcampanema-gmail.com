@@ -1,0 +1,63 @@
+{
+  "slideNumber": 2,
+  "title": "Fact - Boarding Schools Era",
+  "theme": "What they didn't teach us about Native boarding schools & adoption",
+  "visual": {
+    "description": "Close-up of a child's face from a historic boarding school photograph",
+    "style": "historic",
+    "colorPalette": ["black-and-white", "sepia"],
+    "imageGuidance": "Focus on emotion - the child's eyes, expression. NO graphic/violent imagery",
+    "composition": "Close-up focused on child's face with dark overlay (20-40% opacity) for text readability",
+    "sources": [
+      "Library of Congress",
+      "National Archives",
+      "U.S. Department of the Interior archives"
+    ],
+    "avoidances": "No gore, maintain dignity and respect"
+  },
+  "text": {
+    "primary": "Between 1819 and 1969, the U.S. ran 400+ Indian boarding schools in 37 states.\n\nNative kids were taken from their families to \"kill the Indian, save the man.\"",
+    "citation": "U.S. Department of the Interior",
+    "overlay": true,
+    "placement": "center or lower two-thirds",
+    "font": {
+      "style": "clear, legible",
+      "color": "white, cream, or light gray",
+      "effects": "dark overlay on image (20-40% opacity)"
+    }
+  },
+  "historicalContext": {
+    "timeframe": "1819-1969 (some schools operated into 1970s)",
+    "numberOfSchools": "408 federal Indian boarding schools",
+    "states": 37,
+    "quote": "kill the Indian, save the man",
+    "quoteAttribution": "Richard Henry Pratt, founder of Carlisle Indian Industrial School, 1892",
+    "policy": "Cultural genocide - children had hair cut, forbidden from speaking languages, punished for practicing cultures"
+  },
+  "sources": [
+    {
+      "name": "U.S. Department of the Interior",
+      "document": "Federal Indian Boarding School Initiative Investigative Report",
+      "date": "May 2022",
+      "url": "https://www.bia.gov/service/indian-affairs"
+    }
+  ],
+  "designNotes": [
+    "Use clear, legible font",
+    "Break text into readable chunks",
+    "Include citation at bottom in smaller font",
+    "Dark overlay ensures text readability",
+    "Use neutral colors for text"
+  ],
+  "technicalSpecs": {
+    "dimensions": "1080 x 1920 pixels",
+    "aspectRatio": "9:16",
+    "format": "JPG or PNG",
+    "safeZone": "1080 x 1680 pixels (center)",
+    "displayDuration": "5-7 seconds"
+  },
+  "accessibility": {
+    "altText": "Historic photograph of a Native American child in a boarding school. Text explains that between 1819 and 1969, the U.S. ran 400+ Indian boarding schools in 37 states with the goal to 'kill the Indian, save the man.' Source: U.S. Department of the Interior",
+    "contrastRatio": "minimum 4.5:1 (WCAG AA)"
+  }
+}

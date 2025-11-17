@@ -1,0 +1,77 @@
+{
+  "slideNumber": 3,
+  "title": "Adoption Era",
+  "theme": "What they didn't teach us about Native boarding schools & adoption",
+  "visual": {
+    "description": "Vintage newspaper clipping style with 'Adoption' headline",
+    "style": "newspaper aesthetic",
+    "colorPalette": ["newsprint gray", "sepia", "cream"],
+    "imageGuidance": "Styled to look like a 1950s-1970s newspaper headline",
+    "composition": "Newspaper aesthetic with possible torn edge effects or aged paper texture",
+    "typography": "typewriter or newspaper-style fonts",
+    "sources": [
+      "Vintage newspaper archives",
+      "Period-appropriate typography",
+      "Textured backgrounds"
+    ]
+  },
+  "text": {
+    "headline": "ADOPTION",
+    "headlineAlt": "THE ADOPTION ERA",
+    "primary": "Later, through adoption and foster programs, as many as 1 in 3 Native children were removed from their homes—most placed with non-Native families.",
+    "citation": "visionmakermedia.org",
+    "overlay": true,
+    "placement": "center",
+    "font": {
+      "headline": "newspaper-style, bold",
+      "body": "typewriter or serif",
+      "color": "dark gray or black",
+      "background": "cream or newsprint"
+    }
+  },
+  "historicalContext": {
+    "programs": [
+      "Indian Adoption Project (1958-1967)",
+      "Broader child welfare removals"
+    ],
+    "statistics": "25-35% of all Native children removed during peak years (1950s-1970s)",
+    "placements": "Most placed with non-Native families",
+    "legislation": {
+      "name": "Indian Child Welfare Act (ICWA)",
+      "passed": 1978,
+      "purpose": "Passed to address these abuses and protect Native families"
+    }
+  },
+  "sources": [
+    {
+      "name": "Vision Maker Media",
+      "description": "PBS affiliate focused on Native media",
+      "url": "https://www.visionmakermedia.org"
+    },
+    {
+      "name": "National Indian Child Welfare Association (NICWA)",
+      "type": "Research and advocacy organization"
+    },
+    {
+      "name": "Association on American Indian Affairs",
+      "type": "Historical studies on child removal"
+    }
+  ],
+  "designNotes": [
+    "Newspaper aesthetic creates visual variety in story sequence",
+    "Could include torn edge effects or aged paper texture",
+    "Maintain readability with high contrast",
+    "Citation at bottom in smaller font"
+  ],
+  "technicalSpecs": {
+    "dimensions": "1080 x 1920 pixels",
+    "aspectRatio": "9:16",
+    "format": "JPG or PNG",
+    "safeZone": "1080 x 1680 pixels (center)",
+    "displayDuration": "5-7 seconds"
+  },
+  "accessibility": {
+    "altText": "Newspaper-style graphic with headline 'Adoption'. Text explains that through adoption and foster programs, as many as 1 in 3 Native children were removed from their homes and placed with non-Native families. Source: visionmakermedia.org",
+    "contrastRatio": "minimum 4.5:1 (WCAG AA)"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "task": "native-history-story",
+  "timestamp": 1763362021,
+  "datetime_utc": "2025-11-17T06:47:01.850102",
+  "branch": "ccsweb/1763362021-native-history-story",
+  "artifacts": [
+    "ccsweb_artifacts/story-sequence.md",
+    "ccsweb_artifacts/slide-01-hook.json",
+    "ccsweb_artifacts/slide-02-boarding-schools.json",
+    "ccsweb_artifacts/slide-03-adoption.json",
+    "ccsweb_artifacts/slide-04-resilience.json",
+    "ccsweb_artifacts/story-manifest.json",
+    "ccsweb_artifacts/implementation-report.md"
+  ],
+  "worker": "claude-code-web",
+  "repo": "http://local_proxy@127.0.0.1:63548/git/mcampanema/mcampanema-gmail.com"
+}

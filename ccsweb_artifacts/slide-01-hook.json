@@ -1,0 +1,44 @@
+{
+  "slideNumber": 1,
+  "title": "Hook",
+  "theme": "What they didn't teach us about Native boarding schools & adoption",
+  "visual": {
+    "description": "Faded, sepia-toned or black-and-white photograph of Native children in boarding school uniforms at Carlisle Indian Industrial School",
+    "style": "historic",
+    "colorPalette": ["sepia", "black-and-white", "muted"],
+    "imageGuidance": "Faded photo of Native kids in uniforms at Carlisle (or similar)",
+    "composition": "Somber, serious tone with subtle vignette effect to draw focus to children's faces",
+    "sources": [
+      "Library of Congress - Carlisle Indian School collection",
+      "National Archives",
+      "Public domain historic photos"
+    ],
+    "avoidances": "Do not cover children's faces with text"
+  },
+  "text": {
+    "primary": "Did you learn this in school?",
+    "overlay": true,
+    "placement": "lower third or upper third",
+    "font": {
+      "style": "large, bold, readable",
+      "color": "white or cream",
+      "effects": "subtle shadow for contrast"
+    }
+  },
+  "designNotes": [
+    "Keep visual simple and powerful - the image speaks volumes",
+    "Use large, bold, readable font",
+    "Position text to avoid covering children's faces"
+  ],
+  "technicalSpecs": {
+    "dimensions": "1080 x 1920 pixels",
+    "aspectRatio": "9:16",
+    "format": "JPG or PNG",
+    "safeZone": "1080 x 1680 pixels (center)",
+    "displayDuration": "5-7 seconds"
+  },
+  "accessibility": {
+    "altText": "Historic black and white photograph of Native American children in Western-style school uniforms at a boarding school. Text asks: Did you learn this in school?",
+    "contrastRatio": "minimum 4.5:1 (WCAG AA)"
+  }
+}

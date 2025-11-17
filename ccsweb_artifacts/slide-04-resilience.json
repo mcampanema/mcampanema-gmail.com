@@ -1,0 +1,91 @@
+{
+  "slideNumber": 4,
+  "title": "Resilience & Call to Action",
+  "theme": "What they didn't teach us about Native boarding schools & adoption",
+  "visual": {
+    "description": "Contemporary, vibrant, colorful photograph of Native community gathering",
+    "style": "contemporary",
+    "colorPalette": ["vibrant", "warm", "earth tones"],
+    "imageGuidance": "Native community gathering, powwow, food sovereignty event, language teaching, or modern Native families",
+    "composition": "Warm, hopeful, vibrant tone - contrast with earlier slides",
+    "examples": [
+      "Community gathering or powwow (regalia, dancing, drums)",
+      "Food sovereignty event (traditional foods, cooking, gathering)",
+      "Language teaching/learning scene (elders with youth)",
+      "Modern Native families together"
+    ],
+    "styleReference": "PBS documentaries: Gather, Dawnland, Sovereign Innovations",
+    "sources": [
+      "Native Stock (nativestock.ca)",
+      "Navajo Stock Images",
+      "Licensed images from Native photographers",
+      "PBS documentary stills (with permission)"
+    ]
+  },
+  "text": {
+    "primary": "Native communities are still here—teaching languages, reclaiming foodways, fighting for their children.\n\nLearn more: search \"Generations Stolen,\" \"Dawnland,\" and \"Gather.\"\n\n🔁 Share to honor survivors.",
+    "overlay": true,
+    "placement": "lower two-thirds",
+    "font": {
+      "style": "readable, uplifting",
+      "color": "white or cream with good contrast",
+      "palette": "green, earth-tone, or warm colors",
+      "tone": "celebratory but respectful"
+    }
+  },
+  "callToAction": {
+    "primary": "Share to honor survivors",
+    "emoji": "🔁",
+    "documentaries": [
+      "Generations Stolen",
+      "Dawnland",
+      "Gather"
+    ],
+    "searchable": true
+  },
+  "documentaries": [
+    {
+      "title": "Generations Stolen",
+      "topic": "Boarding school survivors",
+      "availability": "Various platforms"
+    },
+    {
+      "title": "Dawnland",
+      "topic": "Maine Wabanaki child welfare crisis and ICWA",
+      "awards": "Peabody Award winner",
+      "availability": "PBS"
+    },
+    {
+      "title": "Gather",
+      "topic": "Native food sovereignty movement",
+      "availability": "Netflix"
+    }
+  ],
+  "additionalResources": [
+    "PBS's Native America series",
+    "National Native American Boarding School Healing Coalition",
+    "IllumiNative organization"
+  ],
+  "designNotes": [
+    "Celebratory but respectful tone",
+    "Text should feel uplifting but not dismissive of trauma",
+    "Use readable font with good contrast",
+    "Consider green, earth-tone, or warm color palette for text",
+    "Make CTA clear and actionable"
+  ],
+  "technicalSpecs": {
+    "dimensions": "1080 x 1920 pixels",
+    "aspectRatio": "9:16",
+    "format": "JPG or PNG",
+    "safeZone": "1080 x 1680 pixels (center)",
+    "displayDuration": "5-7 seconds"
+  },
+  "accessibility": {
+    "altText": "Contemporary photograph of Native American community members at a gathering, showing cultural celebration and resilience. Text: Native communities are still here—teaching languages, reclaiming foodways, fighting for their children. Learn more by searching Generations Stolen, Dawnland, and Gather. Share to honor survivors.",
+    "contrastRatio": "minimum 4.5:1 (WCAG AA)"
+  },
+  "emotionalArc": {
+    "slides1to3": "Recognition of trauma and injustice",
+    "slide4": "Resilience, hope, and action"
+  }
+}
